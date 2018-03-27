@@ -13,7 +13,6 @@ public class ProducerConfig {
 	@Value("${activemq.broker-url}")
 	private String brokerUrl;
 
-	@Bean
 	public ActiveMQConnectionFactory activeMQConnectionFactory() {
 		ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory();
 		activeMQConnectionFactory.setBrokerURL(brokerUrl);
@@ -32,7 +31,7 @@ public class ProducerConfig {
 	}
 
 	@Bean
-	public MessageProducer sender() {
+	public MessageProducer messageProducer() {
 		return new MessageProducer();
 	}
 }
