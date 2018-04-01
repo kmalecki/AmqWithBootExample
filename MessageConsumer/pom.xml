@@ -13,7 +13,7 @@
 		<groupId>com.malecki</groupId>
 		<artifactId>ActiveMqWithSpringBootExample</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath>..</relativePath><!-- lookup parent from repository -->
 	</parent>
 
 	<properties>
@@ -30,6 +30,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-
 </project>
