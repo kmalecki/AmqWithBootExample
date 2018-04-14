@@ -1,0 +1,3 @@
+activemq:
+  broker-url: vm://localhost?broker.persistent=false
+  queue: springBootTestMq

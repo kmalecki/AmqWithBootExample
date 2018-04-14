@@ -11,11 +11,11 @@ import org.springframework.jms.core.JmsTemplate;
  *
  */
 public class MessageProducer {
-	
+
 	@Autowired
 	private JmsTemplate jmsTemplate;
-	
+
 	public void send(String destination, String message) {
-	    jmsTemplate.convertAndSend(destination, message);
+		jmsTemplate.convertAndSend(destination, message);
 	}
 }

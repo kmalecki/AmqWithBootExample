@@ -1,18 +1,17 @@
-package com.malecki.amqproducer.producer;
+package com.malecki.amqconsumer.consumer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.annotation.PostConstruct;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.command.ActiveMQTextMessage;
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class MessageProducerTest {
+public class MsgConsumerTest {
 
 	private static ApplicationContext applicationContext;
 
@@ -36,24 +35,26 @@ public class MessageProducerTest {
 	private String queueName;
 
 	@Autowired
-	private MessageProducer msgProducer;
+	private MsgConsumer msgConsumer;
 
 	private ConnectionFactory connectionFactory;
-	private MessageConsumer consumer;
+	private MessageProducer producer;
+	private Session session;
+	private Queue testQueue;
 
 	@PostConstruct
 	public void initAmqBroker() throws JMSException {
 		connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
 		Connection createConnection = connectionFactory.createConnection();
 		createConnection.start();
-		Session session = createConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-		Queue createQueue = session.createQueue(queueName);
-		consumer = session.createConsumer(createQueue);
+		session = createConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+		testQueue = session.createQueue(queueName);
+		producer = session.createProducer(testQueue);
 	}
 
 	@Autowired
 	void setContext(ApplicationContext applicationContext) {
-		MessageProducerTest.applicationContext = applicationContext;
+		MsgConsumerTest.applicationContext = applicationContext;
 	}
 
 	@AfterClass
@@ -63,13 +64,12 @@ public class MessageProducerTest {
 
 	@Test
 	public void messageProducerTest() throws Exception {
-		String messageToSend = "Hello JMS!";
-
-		msgProducer.send(queueName, messageToSend);
-		ActiveMQTextMessage receive = (ActiveMQTextMessage) consumer.receive(100);
-		String body = receive.getText();
-
-		assertNotNull(body);
-		assertEquals("Recieved invalid message.", messageToSend, body);
+		int initCount = MsgConsumer.MSG_COUNTER;
+		String messageToSend = "Consumer Hello JMS test.";
+		TextMessage txtMsg = session.createTextMessage(messageToSend);
+		producer.send(txtMsg);
+		Thread.sleep(100); // make a pause to be sure that environment did not influence the performance of
+							// consumer.
+		assertTrue(MsgConsumer.MSG_COUNTER - initCount == 1);
 	}
 }

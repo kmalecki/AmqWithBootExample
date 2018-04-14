@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "activemq.broker-url",
+    "type": "java.lang.String",
+    "description": "The host and ip of ActiveMq broker."
+  },
+  {
+    "name": "activemq.queue",
+    "type": "java.lang.String",
+    "description": "Name of queue used in this project."
+  }
+]}
